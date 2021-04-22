@@ -6,22 +6,30 @@
     </router-link>
     <Tab />
     <SideBar />
+    <GoodsList />
+    <template v-if="isLoading">
+      <van-loading type="spinner" color="#ff1a90" vertical/>
+    </template>
   </div>
 </template>
 
 <script>
 import Tab from "@/components/Tab";
 import SideBar from "@/components/SideBar";
+import GoodsList from "@/components/GoodsList";
+import { mapState } from 'vuex'
 export default {
   components: {
     Tab,
     SideBar,
+    GoodsList
   },
   data() {
     return {
       place: "荔枝水果9.99",
     };
   },
+  computed:mapState('classify',['isLoading'])
 };
 </script>
 
@@ -34,7 +42,7 @@ export default {
   .search-btn {
     height: 31.5px;
     line-height: 31.5px;
-    margin: 10.5px auto 0;
+    margin: 10.5px 10.5px 0;
     background: #eee;
     border-radius: 10px;
     text-align: center;

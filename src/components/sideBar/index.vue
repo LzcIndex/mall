@@ -10,7 +10,7 @@
       v-for="(item, i) in sideBarList"
       :key="item"
       :class="{ active: index == i }"
-      @touchend="scrollTo(item, i,$event)"
+      @touchend="scrollTo(item, i, $event)"
     >
       {{ i === 0 ? "全部" : item }}
     </div>
@@ -27,10 +27,10 @@ export default {
       index: "",
     };
   },
-  computed: mapState("sideBar", ["sideBarList"]),
+  computed: mapState("classify", ["sideBarList"]),
   methods: {
-    scrollTo(value,i,e) {
-       if (this.move) {
+    scrollTo(value, i, e) {
+      if (this.move) {
         return;
       }
       this.index = i;
@@ -39,15 +39,21 @@ export default {
       const itemTop = e.target.getBoundingClientRect().top;
       const itemHeight = e.target.offsetHeight;
       const sideBarContainerHeight = sideBarContainer.offsetHeight;
-      const pTop = sideBarContainer.getBoundingClientRect().top
-      const end = itemTop + itemHeight / 2 - pTop - sideBarContainerHeight / 2
+      const pTop = sideBarContainer.getBoundingClientRect().top;
+      const end = itemTop + itemHeight / 2 - pTop - sideBarContainerHeight / 2;
       this.moveTo(
         sideBarContainer.scrollTop,
         end,
         sideBarContainer,
         "scrollTop"
       );
+      console.log(this.index)
+      this.getGoodsList(value,1)
     },
+    //获取商品列表
+    getGoodsList(type,page,sort,size){
+      this.$store.dispatch('classify/getGoodList',{type,page,sort,size})
+    }
   },
 };
 </script>

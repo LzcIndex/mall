@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import sideBar from './sideBar'
+import classify from './classify'
 Vue.use(Vuex)
 
 const store  =  new Vuex.Store({
     strict:true,
     modules:{
-        sideBar
+        classify
     }
 })
 

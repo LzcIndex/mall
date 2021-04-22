@@ -135,7 +135,7 @@ export default {
   },
   mounted(){
     //触发获取第一次二级导航
-    this.$store.dispatch('sideBar/getSideBar',this.menuList[this.active].title)
+    this.$store.dispatch('classify/getSideBar',this.menuList[this.active].title)
   },
   methods: {
     scrollTo(index, e) {
@@ -144,7 +144,7 @@ export default {
         return;
       }
       this.active = index;
-      this.$store.dispatch('sideBar/getSideBar',this.menuList[this.active].title)
+      this.$store.dispatch('classify/getSideBar',this.menuList[this.active].title)
       //计算移动距离
       const { tabContainer } = this.$refs;
       const containerWidth = tabContainer.offsetWidth;
