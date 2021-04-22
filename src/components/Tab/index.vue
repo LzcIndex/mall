@@ -18,12 +18,12 @@
 </template>
 
 <script>
+import moveTo from '@/mixin/moveTo'
 export default {
+  mixins:[moveTo],
   data() {
     return {
       active: 0,
-      move: false,
-      timeOutMove:false,
       menuList: [
         {
           title: "时令水果",
@@ -133,6 +133,10 @@ export default {
       ],
     };
   },
+  mounted(){
+    //触发获取第一次二级导航
+    this.$store.dispatch('sideBar/getSideBar',this.menuList[this.active].title)
+  },
   methods: {
     scrollTo(index, e) {
       console.log(this.move)
@@ -140,30 +144,14 @@ export default {
         return;
       }
       this.active = index;
+      this.$store.dispatch('sideBar/getSideBar',this.menuList[this.active].title)
       //计算移动距离
       const { tabContainer } = this.$refs;
       const containerWidth = tabContainer.offsetWidth;
       const itemWidth = e.target.offsetWidth;
       const itemLeft = e.target.getBoundingClientRect().left;
       // tabContainer.scrollLeft += itemLeft + itemWidth / 2 - containerWidth / 2;
-      this.moveTo(tabContainer.scrollLeft,itemLeft + itemWidth / 2 - containerWidth / 2,tabContainer)
-    },
-    moveTo(start, end, dom) {
-      let dis = 0;
-      let speed = 5;
-      this.timeOutMove = true;
-      if (end < 0) {
-        speed *= -1;
-      }
-      let timer = setInterval(() => {
-        dis += speed;
-        dom.scrollLeft = start + dis;
-        if (Math.abs(dis) >= Math.abs(end)) {
-          dom.scrollLeft = start + end;
-          clearInterval(timer);
-          this.timeOutMove = false;
-        }
-      }, 2);
+      this.moveTo(tabContainer.scrollLeft,itemLeft + itemWidth / 2 - containerWidth / 2,tabContainer,'scrollLeft')
     },
   },
 };
