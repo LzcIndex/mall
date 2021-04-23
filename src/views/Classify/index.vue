@@ -15,7 +15,7 @@
 
 <script>
 import Tab from "@/components/Tab";
-import SideBar from "@/components/SideBar";
+import SideBar from "@/components/sideBar";
 import GoodsList from "@/components/GoodsList";
 import { mapState } from 'vuex'
 export default {
