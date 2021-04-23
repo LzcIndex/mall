@@ -9,6 +9,7 @@
       icon="cart-o"
       to="/home/shopping"
       id="shop-car"
+      :badge="badge" 
       >购物车</van-tabbar-item
     >
     <van-tabbar-item name="setting" icon="user-circle-o" to="/other"
@@ -19,6 +20,12 @@
 
 <script>
 export default {
+  props:{
+    badge:{
+      type:[String , Number],
+      default:''
+    }
+  }
 };
 </script>
 

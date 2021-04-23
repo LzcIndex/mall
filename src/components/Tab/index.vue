@@ -143,6 +143,7 @@ export default {
         return;
       }
       this.active = index;
+      this.$store.commit('classify/resetGoodsList')
       this.$store.dispatch('classify/getSideBar',this.menuList[this.active].title)
       //计算移动距离
       const { tabContainer } = this.$refs;

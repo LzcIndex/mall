@@ -30,7 +30,7 @@
           v-model="loading"
           @load="onLoad"
         >
-          <Card v-for="(good, i) in goodsList" :key="i" :good="good" />
+          <Card v-for="(good, i) in goodsList" :key="i" :good="good" :num="counterMap[good.id]"/>
         </van-list>
       </van-pull-refresh>
     </div>
@@ -54,7 +54,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("classify", ["goodsList"]),
+    ...mapState("classify", ["goodsList",'counterMap',"currentSideBar"]),
     ...mapGetters("classify", ["isFinished"]),
   },
   methods: {
@@ -86,8 +86,7 @@ export default {
       this.loading = false;
     },
     onLoad() {
-      console.log('loading',this.loading)
-      if(!this.$store.state.classify.currentSideBar){
+      if(!this.currentSideBar){
         this.loading = false
         return
       }
@@ -107,6 +106,14 @@ export default {
       });
     },
   },
+  watch:{
+    //一级导航变动时重新触发加载
+    currentSideBar(){
+      this.finished = false
+       this.loading = false
+      this.currentPage = 1
+    }
+  }
 };
 </script>
 

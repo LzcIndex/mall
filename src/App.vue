@@ -9,6 +9,10 @@
 export default {
   name: 'App',
   components: {
+  },
+  created(){
+    let counterMap = JSON.parse(localStorage.getItem('goods')) || {}
+    this.$store.commit('classify/setCounterMap',counterMap)
   }
 }
 </script>

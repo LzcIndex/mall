@@ -1,7 +1,7 @@
 <template>
   <div class="card-container van-hairline--top-bottom">
     <div class="card-img">
-      <img :src="good.images[0]" />
+      <img :src="good.images[0]" ref="img" />
     </div>
     <div class="card-content">
       <div class="title overflow-hidden">{{ good.title }}</div>
@@ -14,12 +14,16 @@
         <div class="price" v-if="good.priceOff">￥{{ good.price }}</div>
       </div>
       <div class="counter">
-         <div>
-          <img src="https://duyi-bucket.oss-cn-beijing.aliyuncs.com/img/rec.png">
+        <div v-if="num" @touchend="counter(good.id, -1)">
+          <img
+            src="https://duyi-bucket.oss-cn-beijing.aliyuncs.com/img/rec.png"
+          />
         </div>
-        <div class="num">1</div>
-        <div>
-          <img src="https://duyi-bucket.oss-cn-beijing.aliyuncs.com/img/add.png">
+        <div class="num" v-if="num">{{ num }}</div>
+        <div @touchend="counter(good.id, 1)">
+          <img
+            src="https://duyi-bucket.oss-cn-beijing.aliyuncs.com/img/add.png"
+          />
         </div>
       </div>
     </div>
@@ -27,8 +31,36 @@
 </template>
 
 <script>
+import flyAnimation from '@/tools/animate'
 export default {
-  props: ["good"],
+  props: ["good", "num"],
+  methods: {
+    counter(id, value) {
+      this.$store.commit("classify/storageChange", { id, value });
+      if (value == 1) {
+        this.fly();
+      }
+    },
+    fly() {
+      const shopCar = document.querySelector("#shop-car");
+      const img = this.$refs.img;
+      const { top:startY, left:startX } = img.getBoundingClientRect();
+      const { top:carTop, left:carLeft } = shopCar.getBoundingClientRect();
+      const { offsetHeight: carHeight, offsetWidth: carWidth } = shopCar;
+      const { offsetHeight: height, offsetWidth: width } = shopCar;
+      const endY = carTop + carHeight / 2
+      const endX = carLeft + carWidth / 2
+      flyAnimation({
+        startY,
+        startX,
+        endY,
+        endX,
+        src:img.src,
+        width,
+        height
+      })
+    },
+  },
 };
 </script>
 
