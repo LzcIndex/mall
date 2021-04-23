@@ -33,6 +33,7 @@ export default {
       if (this.move) {
         return;
       }
+      this.$store.commit('classify/resetGoodsList')
       this.index = i;
       //计算滚动距离
       const { sideBarContainer } = this.$refs;
@@ -47,7 +48,7 @@ export default {
         sideBarContainer,
         "scrollTop"
       );
-      console.log(this.index)
+      this.$store.commit('classify/setCurrentSideBar',value)
       this.getGoodsList(value,1)
     },
     //获取商品列表

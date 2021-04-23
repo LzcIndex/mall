@@ -139,7 +139,6 @@ export default {
   },
   methods: {
     scrollTo(index, e) {
-      console.log(this.move)
       if (this.move || this.timeOutMove) {
         return;
       }

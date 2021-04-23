@@ -24,8 +24,13 @@
         @refresh="onRefresh"
         head-height="80"
       >
-        <van-list>
-          <Card v-for="good in goodsList" :key="good.id" :good="good" />
+        <van-list
+          finished-text="没有更多了"
+          :finished="finished"
+          v-model="loading"
+          @load="onLoad"
+        >
+          <Card v-for="(good, i) in goodsList" :key="i" :good="good" />
         </van-list>
       </van-pull-refresh>
     </div>
@@ -34,7 +39,7 @@
 
 <script>
 import Card from "@/components/Card";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 export default {
   components: {
     Card,
@@ -43,11 +48,24 @@ export default {
     return {
       type: "all",
       isLoading: false,
+      loading: false,
+      finished: false,
+      currentPage: 1,
     };
   },
-  computed: mapState("classify", ["goodsList"]),
+  computed: {
+    ...mapState("classify", ["goodsList"]),
+    ...mapGetters("classify", ["isFinished"]),
+  },
   methods: {
-    onRefresh() {},
+    onRefresh() {
+      this.$store.commit("classify/resetGoodsList");
+      this.currentPage = 0;
+      this.finished = false;
+      this.loading = false
+      this.onLoad();
+      this.isLoading = false;
+    },
     changeType(type) {
       if (type === "price") {
         if (this.type === "price-up") {
@@ -58,6 +76,35 @@ export default {
       } else {
         this.type = type;
       }
+      this.currentPage = 1;
+      this.$store.commit("classify/resetGoodsList"); //类型切换,需要重置商品列表
+      this.$store.dispatch("classify/getGoodList", {
+        sort: this.type,
+        page: this.currentPage,
+      });
+      this.finished = false;
+      this.loading = false;
+    },
+    onLoad() {
+      console.log('loading',this.loading)
+      if(!this.$store.state.classify.currentSideBar){
+        this.loading = false
+        return
+      }
+      if (this.finished) {
+        return;
+      }
+      this.currentPage++;
+      this.$store.dispatch("classify/getGoodList", {
+        page: this.currentPage,
+        sort:this.type,
+        cb: () => {
+          this.loading = false
+          if (this.isFinished) {
+            this.finished = true;
+          }
+        },
+      });
     },
   },
 };
@@ -70,6 +117,7 @@ export default {
   top: 135px;
   left: 79px;
   bottom: 50px;
+  overflow-y: auto;
   .list-header {
     position: sticky;
     top: 0;

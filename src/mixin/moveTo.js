@@ -9,7 +9,7 @@ export default {
     methods: {
         moveTo(start, end, dom, prop) {
             let dis = 0;
-            let speed = 5;
+            let speed = 3;
             this.timeOutMove = true;
             if (end < 0) {
                 speed *= -1;

@@ -8,7 +8,7 @@ export async function getSideBar(type) {
     })
 }
 
-export async function getGoodList(type, page, sort = 'all', size = 10) {
+export async function getGoodList(type, page, sort = 'all', size = 5) {
     return await request.get('/getGoodsList', {
         params: {
             type,
