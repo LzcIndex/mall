@@ -1,9 +1,10 @@
 <template>
   <div
     class="item"
+    v-if="exist"
     :style="{
-      width,
-      height,
+      width:width + 'px',
+      height:height + 'px',
       transform: `translate(${moveX}px,${moveY}px) scale(${sx},${sy})`,
       opacity,
     }"

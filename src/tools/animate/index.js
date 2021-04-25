@@ -27,7 +27,7 @@ export default function({ startX, startY, endX, endY, src, width, height }) {
     app.sx = 0.1;
     app.sy = 0.1;
     app.opacity = 0;
-  });
+  },0);
   setTimeout(() => {
     app.exist = false;
   }, 1000);

@@ -4,7 +4,7 @@
       <van-icon
         name="arrow-left"
         class="arr-left"
-        @click="$router.goBack()"
+        @click="$router.go(-1)"
       ></van-icon>
       <van-search
         class="search-inp"
@@ -16,8 +16,13 @@
         @focus="onFocus"
         autofocus
       >
-        <template #action>
+        <template #action v-if="!showList">
           <div @touchend="onSearch">搜索</div>
+        </template>
+        <template #action v-else>
+          <router-link tag="div" class="shop-car" id="shop-car" to="/home/shopping">
+            <van-icon name="shopping-cart-o" :badge="badge"/>
+          </router-link>
         </template>
       </van-search>
     </div>
@@ -41,6 +46,7 @@
         :finished="finished"
         v-model="loading"
         @load="onLoad"
+        :immediate-check='false'
       >
         <Card
           v-for="(good, i) in goodsList"
@@ -49,6 +55,12 @@
           :num="counterMap[good.id]"
         />
       </van-list>
+      <van-empty
+        v-if="!goodsList.length"
+        class="custom-image"
+        image="https://img01.yzcdn.cn/vant/custom-empty-image.png"
+        :description="`没有找到${value}`"
+      />
     </div>
   </div>
 </template>
@@ -96,18 +108,23 @@ export default {
     },
     async onLoad() {
       this.page++
-      let resp = search(this.value,this.page,this.size)
+      let resp = await search(this.value,this.page,this.size)
+      this.loading = false
       this.total = resp.total
       this.goodsList = [...this.goodsList,...resp.list]
-      this.showList = true
+      console.log(this.total,this.goodsList.length)
+      if(this.total <=  this.goodsList.length){
+        this.finished = true
+      }
     },
     async onSearch(val) {
       if (val && typeof val == "string") {
         this.value = val;
       }
+      this.goodsList = []
       let resp = await search(this.value, this.page, this.size);
+      this.goodsList = [...this.goodsList,...resp.list]
       this.showList = true
-      console.log(resp);
     },
     onInput() {
       if (this.timer) {
@@ -116,7 +133,7 @@ export default {
       }
       this.timer = setTimeout(async () => {
         let resp = await likeSearch(this.value.trim() || this.placeholder);
-        console.log(resp);
+        this.likeList = resp.result
         clearTimeout(this.timer);
         this.timer = null;
       }, 300);
@@ -146,8 +163,11 @@ export default {
     .search-inp {
       flex: 1;
     }
+    .shop-car{
+      font-size: 25px;
+    }
   }
-  like-search {
+  .like-search {
     position: relative;
     top: 50px;
     box-sizing: border-box;
@@ -155,12 +175,16 @@ export default {
     background: #fff;
     z-index: 10;
   }
-  goods-card {
+  .goods-card {
     position: relative;
     width: 345px;
     margin: 48px auto 0;
     z-index: 10;
     background: #fff;
+  }
+   /deep/.custom-image .van-empty__image {
+    width: 70px;
+    height: 70px;
   }
 }
 </style>>

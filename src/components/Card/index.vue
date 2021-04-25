@@ -47,9 +47,10 @@ export default {
       const { top:startY, left:startX } = img.getBoundingClientRect();
       const { top:carTop, left:carLeft } = shopCar.getBoundingClientRect();
       const { offsetHeight: carHeight, offsetWidth: carWidth } = shopCar;
-      const { offsetHeight: height, offsetWidth: width } = shopCar;
+      const { offsetHeight: height, offsetWidth: width } = img;
       const endY = carTop + carHeight / 2
       const endX = carLeft + carWidth / 2
+      console.log(width,height)
       flyAnimation({
         startY,
         startX,
