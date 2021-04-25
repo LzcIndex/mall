@@ -4,7 +4,7 @@
       <van-icon
         name="arrow-left"
         class="arr-left"
-        @click="$router.go(-1)"
+        @click="$router.goBack()"
       ></van-icon>
       <van-search
         class="search-inp"
@@ -62,6 +62,10 @@
         :description="`没有找到${value}`"
       />
     </div>
+    <div class="history" v-if="!showList && likeList.length === 0">
+      <History @search="onSearch" :historyList="historyList" />
+    </div>
+     
   </div>
 </template>
 
@@ -69,9 +73,11 @@
 import { likeSearch, search } from "@/api/search";
 import Card from "@/components/Card";
 import { mapState } from "vuex";
+import History from '@/components/History'
 export default {
   components: {
     Card,
+    History
   },
   data() {
     return {
@@ -85,7 +91,8 @@ export default {
       goodsList: [],
       likeList: [],
       showList:false,
-      total:0
+      total:0,
+      historyList:[]
     };
   },
   computed: {
@@ -100,6 +107,9 @@ export default {
       }
       return counters;
     },
+  },
+  created(){
+    this.historyList = JSON.parse(localStorage.getItem('historyList')) || [] 
   },
   methods: {
     formatHTML(str) {
@@ -122,6 +132,20 @@ export default {
         this.value = val;
       }
       this.goodsList = []
+      this.page = 1
+      this.finished = false
+
+      const result = this.historyList.find((item)=>item.value === this.value)
+      if(result){
+        result.updateTime = new Date().getTime()
+        this.historyList.sort((a,b) => b.updateTime - a.updateTime)
+      }else{
+        this.historyList.unshift({value:this.value,updateTime:new Date().getTime()})
+        if(this.historyList.length >= 11){
+          this.historyList.pop()
+        }
+      }
+      localStorage.setItem('historyList', JSON.stringify(this.historyList));
       let resp = await search(this.value, this.page, this.size);
       this.goodsList = [...this.goodsList,...resp.list]
       this.showList = true
@@ -149,6 +173,7 @@ export default {
 .search-container {
   width: 100%;
   height: 100vh;
+  z-index: 10;
   background: #fff;
   .search-head {
     width: 345px;
@@ -185,6 +210,13 @@ export default {
    /deep/.custom-image .van-empty__image {
     width: 70px;
     height: 70px;
+  }
+  .history{
+    width: 350px;
+    position: absolute;
+    top: 60px;
+    left: 15px;
+    z-index: 1;
   }
 }
 </style>>

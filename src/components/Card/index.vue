@@ -33,7 +33,7 @@
 <script>
 import flyAnimation from '@/tools/animate'
 export default {
-  props: ["good", "num"],
+  props: ["good", "num",'isFly'],
   methods: {
     counter(id, value) {
       this.$store.commit("classify/storageChange", { id, value });
@@ -42,6 +42,9 @@ export default {
       }
     },
     fly() {
+      if(this.isFly){
+        return
+      }
       const shopCar = document.querySelector("#shop-car");
       const img = this.$refs.img;
       const { top:startY, left:startX } = img.getBoundingClientRect();

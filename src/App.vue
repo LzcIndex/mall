@@ -1,27 +1,59 @@
 <template>
   <div id="app">
-   <router-view></router-view>
+    <transition
+      :name="transitionName"
+      :mode="$router.back ? 'out-in' : 'in-out'"
+    >
+      <router-view class="view"></router-view>
+    </transition>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'App',
-  components: {
+  name: "App",
+  components: {},
+  data() {
+    return {
+      transitionName: "slide-left",
+    };
   },
-  created(){
-    let counterMap = JSON.parse(localStorage.getItem('goods')) || {}
-    this.$store.commit('classify/setCounterMap',counterMap)
-  }
-}
+  created() {
+    let counterMap = JSON.parse(localStorage.getItem("goods")) || {};
+    this.$store.commit("classify/setCounterMap", counterMap);
+  },
+  watch: {
+    $route(to, from) {
+      if (to.name === "Classify" && from.name === "Search") {
+        this.$router.back = true;
+      }
+      if (this.$router.back) {
+        this.transitionName = "slide-right";
+      } else {
+        this.transitionName = "slide-left";
+      }
+      this.$router.back = false;
+    },
+  },
+};
 </script>
 
-<style>
-*{
+<style lang="less">
+* {
   margin: 0;
 }
-#app {
- 
+.view {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  transition: all .3s linear;
 }
+.slide-left-enter {
+  transform: translate(100%, 0);
+}
+.slide-right-leave-to {
+  transform: translate(100%, 0);
+}
+
 </style>
