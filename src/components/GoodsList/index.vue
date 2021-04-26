@@ -18,7 +18,7 @@
         价格
       </div>
     </div>
-    <div class="list-content">
+    <div class="list-content" v-if="goodsList.length">
       <van-pull-refresh
         v-model="isLoading"
         @refresh="onRefresh"
@@ -30,10 +30,17 @@
           v-model="loading"
           @load="onLoad"
         >
-          <Card v-for="(good, i) in goodsList" :key="i" :good="good" :num="counterMap[good.id]"/>
+          <Card v-for="(good, i) in goodsList" :key="i" :good="good" :num="counterMap[good.id]" @changeHandler="addCounter"/>
         </van-list>
       </van-pull-refresh>
     </div>
+    <template v-else>
+        <van-empty
+        class="custom-image"
+        image="https://img01.yzcdn.cn/vant/custom-empty-image.png"
+        :description="`没有相关商品`"
+      />
+    </template>
   </div>
 </template>
 
@@ -105,6 +112,9 @@ export default {
         },
       });
     },
+    addCounter(id, value){
+      this.$store.commit("classify/storageChange", { id, value });
+    }
   },
   watch:{
     //一级导航变动时重新触发加载
@@ -174,6 +184,10 @@ export default {
         }
       }
     }
+  }
+   /deep/.custom-image .van-empty__image {
+    width: 70px;
+    height: 70px;
   }
 }
 </style>>

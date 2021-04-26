@@ -36,7 +36,8 @@ export default {
   props: ["good", "num",'isFly'],
   methods: {
     counter(id, value) {
-      this.$store.commit("classify/storageChange", { id, value });
+      // this.$store.commit("classify/storageChange", { id, value });
+      this.$emit('changeHandler',id,value)
       if (value == 1) {
         this.fly();
       }

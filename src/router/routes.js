@@ -1,3 +1,4 @@
+import Search from '@/views/Search'
 export default [
     {
         path:'*',
@@ -23,6 +24,6 @@ export default [
     {
         path: '/search',
         name: 'Search',
-        component: () => import(/* webpackChunkName: "home" */ "@/views/Search"),
+        component: Search
     }
 ]

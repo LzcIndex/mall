@@ -1,13 +1,18 @@
 <template>
   <div class="shopping-container">
     <div class="top-nav">
-      <van-nav-bar title="购物车" right-text="删除" @click-right="del"/>
+      <van-nav-bar title="购物车" right-text="删除" @click-right="del" />
     </div>
     <div class="card-list" v-if="this.list.length !== 0">
       <van-checkbox-group v-model="result" ref="checkboxGroup">
         <div class="card-box" v-for="item in list" :key="item.id">
           <van-checkbox class="check" :name="item.id"></van-checkbox>
-          <Card :good="item" :isFly="true" :num="counterMap[item.id]" />
+          <Card
+            :good="item"
+            :isFly="true"
+            :num="counterMap[item.id]"
+            @changeHandler="addCounter"
+          />
         </div>
       </van-checkbox-group>
     </div>
@@ -28,6 +33,7 @@
 </template>
 
 <script>
+import { Dialog, Toast } from "vant";
 import { mapState } from "vuex";
 import { getGoodsByIds } from "@/api/shopping";
 import Card from "@/components/Card";
@@ -44,6 +50,15 @@ export default {
   },
   created() {
     this.getAllData();
+  },
+  watch: {
+    result() {
+      if (this.result.length === this.list.length) {
+        this.checked = true;
+      } else {
+        this.checked = false;
+      }
+    },
   },
   computed: {
     ...mapState("classify", ["counterMap"]),
@@ -73,20 +88,50 @@ export default {
     },
     onSubmit() {},
     checkAll() {
-      if(!this.$refs.checkboxGroup){
-        this.$Toast('购物车没有任何有效商品')
-        this.checked = false
-        return
+      if (!this.$refs.checkboxGroup) {
+        Toast("购物车没有任何有效商品");
+        this.checked = false;
+        return;
       }
-      if(this.checked){
-        this.$refs.checkboxGroup.toggleAll(true)
-      }else{
-        this.$refs.checkboxGroup.toggleAll(false)
+      if (this.checked) {
+        this.$refs.checkboxGroup.toggleAll(true);
+      } else {
+        this.$refs.checkboxGroup.toggleAll(false);
       }
     },
-    del(){
-      
-    }
+    del() {
+      if (!this.result.length) {
+        Toast("你沒有选中商品");
+      }
+      Dialog.confirm({ message: "您是否要删除已选中商品" })
+        .then(() => {
+          this.result.forEach((e) => {
+            this.$store.commit("classify/storageChange", { id: e, value: -1 });
+            this.list = this.list.filter((item) => {
+              let index = this.result.findIndex((x) => x === item.id);
+              if (index == -1) {
+                return true;
+              }
+              this.result.splice(index, 1);
+              return false;
+            });
+            if (this.list.length === 0) {
+              this.checked = false;
+            }
+          });
+        })
+        .catch(() => {});
+    },
+    async addCounter(id, value) {
+      if (this.counterMap[id] == 1 && value == -1) {
+        Dialog.confirm({ message: "您是否要删除已选中商品" })
+          .then(() => {
+            this.list = this.list.filter((item) => item.id !== id);
+          })
+          .catch(() => {});
+      }
+      this.$store.commit("classify/storageChange", { id, value });
+    },
   },
 };
 </script>

@@ -53,6 +53,7 @@
           :key="i"
           :good="good"
           :num="counterMap[good.id]"
+          @changeHandler="addCounter"
         />
       </van-list>
       <van-empty
@@ -85,7 +86,7 @@ export default {
       placeholder: "酒",
       timer: null,
       page: 1,
-      size: 5,
+      size: 7,
       finished: false,
       loading: false,
       goodsList: [],
@@ -134,7 +135,7 @@ export default {
       this.goodsList = []
       this.page = 1
       this.finished = false
-
+      this.loading = false
       const result = this.historyList.find((item)=>item.value === this.value)
       if(result){
         result.updateTime = new Date().getTime()
@@ -148,6 +149,10 @@ export default {
       localStorage.setItem('historyList', JSON.stringify(this.historyList));
       let resp = await search(this.value, this.page, this.size);
       this.goodsList = [...this.goodsList,...resp.list]
+      this.total = resp.total
+      if(this.total <=  this.goodsList.length){
+        this.finished = true
+      }
       this.showList = true
     },
     onInput() {
@@ -165,6 +170,9 @@ export default {
     onFocus() {
       this.showList = false
     },
+    addCounter(id, value){
+      this.$store.commit("classify/storageChange", { id, value });
+    }
   },
 };
 </script>

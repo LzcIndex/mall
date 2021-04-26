@@ -9,7 +9,7 @@
       class="item"
       v-for="(item, i) in sideBarList"
       :key="item"
-      :class="{ active: index == i }"
+      :class="{ active: currentSideBar == item }"
       @touchend="scrollTo(item, i, $event)"
     >
       {{ i === 0 ? "全部" : item }}
@@ -27,7 +27,7 @@ export default {
       index: "",
     };
   },
-  computed: mapState("classify", ["sideBarList"]),
+  computed: mapState("classify", ["sideBarList",'currentSideBar']),
   methods: {
     scrollTo(value, i, e) {
       if (this.move) {

@@ -24,6 +24,11 @@ export default {
   },
   watch: {
     $route(to, from) {
+      if(to.name && !from.name){
+        this.transitionName = ''
+        return
+      }
+      console.log(to.name,from.name)
       if (to.name === "Classify" && from.name === "Search") {
         this.$router.back = true;
       }
@@ -47,7 +52,7 @@ export default {
   left: 0;
   top: 0;
   width: 100%;
-  transition: all .3s linear;
+  transition: all .3s ease-out;
 }
 .slide-left-enter {
   transform: translate(100%, 0);
